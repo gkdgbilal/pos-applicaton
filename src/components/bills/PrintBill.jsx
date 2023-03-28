@@ -154,14 +154,14 @@ const PrintBill = ({ isModalOpen, setIsModalOpen }) => {
                                             colSpan="4"
                                             scope="row"
                                         >
-                                            <span className="font-normal text-slate-700">VAT 8%</span>
+                                            <span className="font-normal text-slate-700">Tax 8%</span>
                                         </th>
                                         <th
                                             className="text-left pt-4 sm:hidden"
                                             scope="row"
                                             colSpan="4"
                                         >
-                                            <p className="font-normal text-slate-700">VAT 8%</p>
+                                            <p className="font-normal text-slate-700">Tax 8%</p>
                                         </th>
                                         <th className="text-right pt-4" scope="row">
                                             <span className="font-normal text-red-600">+4.88$</span>

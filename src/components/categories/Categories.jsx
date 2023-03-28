@@ -1,44 +1,53 @@
-import React from 'react'
+import { PlusOutlined, EditOutlined } from '@ant-design/icons'
+import { useState } from 'react';
+import './style.css'
+import AddCategory from './AddCategory';
+import EditCategory from './EditCategory';
 
-const Categories = () => {
+
+const Categories = ({ categories, setCategories }) => {
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
     return (
         <ul className='flex md:flex-col gap-4 text-center text-lg'>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
+            <li className='category-item'>
                 <span>All</span>
             </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Foods</span>
+            {
+                categories.map(category => (
+                    <li
+                        className='category-item'
+                        key={category._id}
+                    >
+                        <span>{category.title}</span>
+                    </li>
+                ))
+            }
+            <li
+                className='category-item !bg-purple-800 hover:opacity-90'
+                onClick={() => setIsAddModalOpen(true)}
+            >
+                <PlusOutlined />
             </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Fruits</span>
+            <li
+                className='category-item !bg-orange-800 hover:opacity-90'
+                onClick={() => setIsEditModalOpen(true)}
+            >
+                <EditOutlined />
             </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Drinks</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>All</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Foods</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Fruits</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Drinks</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>All</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Foods</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Fruits</span>
-            </li>
-            <li className='bg-green-700 px-6 py-10 text-white cursor-pointer hover:bg-pink-700 transition-all min-w-[145px]'>
-                <span>Drinks</span>
-            </li>
+            <AddCategory
+                isAddModalOpen={isAddModalOpen}
+                setIsAddModalOpen={setIsAddModalOpen}
+                categories={categories}
+                setCategories={setCategories}
+            />
+            <EditCategory
+                isEditModalOpen={isEditModalOpen}
+                setIsEditModalOpen={setIsEditModalOpen}
+                categories={categories}
+                setCategories={setCategories}
+            />
         </ul>
     )
 }

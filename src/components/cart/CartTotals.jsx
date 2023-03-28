@@ -43,7 +43,7 @@ const CartTotals = () => {
                         <span>99$</span>
                     </div>
                     <div className="flex justify-between p-2">
-                        <b>VAT 8%</b>
+                        <b>Tax 8%</b>
                         <span className="text-red-700">+7.92$</span>
                     </div>
                 </div>

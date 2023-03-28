@@ -49,11 +49,22 @@ const RegisterPage = () => {
             <Form.Item
               label="Password Again"
               name={"passwordAgain"}
+              dependencies={["password"]}
               rules={[
                 {
                   required: true,
                   message: "Password Again is required!",
                 },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("The two passwords that you entered do not match!")
+                    );
+                  },
+                }),
               ]}
             >
               <Input.Password />

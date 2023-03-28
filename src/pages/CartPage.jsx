@@ -56,7 +56,7 @@ const CartPage = () => {
                             <span>549.5$</span>
                         </div>
                         <div className='flex justify-between my-2'>
-                            <span>VAT Total 8%</span>
+                            <span>Tax Total 8%</span>
                             <span className='text-red-600'>+43.5$</span>
                         </div>
                         <div className='flex justify-between'>
