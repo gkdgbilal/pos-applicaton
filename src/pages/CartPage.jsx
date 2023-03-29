@@ -1,41 +1,101 @@
-import { Button, Card, Table } from 'antd'
+import { Button, Card, message, Popconfirm, Table } from 'antd'
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CreateBill from '../components/cart/CreateBill';
 import Header from '../components/header/Header'
+import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { decreaseQuantity, increaseQuantity, removeFromCart } from '../redux/cartSlice';
 
 const CartPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { cartItems, total, tax } = useSelector(state => state.cart)
+    const dispatch = useDispatch()
 
-    const dataSource = [
-        {
-            key: '1',
-            name: 'Mike',
-            age: 32,
-            address: '10 Downing Street',
-        },
-        {
-            key: '2',
-            name: 'John',
-            age: 42,
-            address: '10 Downing Street',
-        },
-    ];
+    console.log(cartItems)
 
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Product Image',
+            dataIndex: 'img',
+            key: 'img',
+            width: 125,
+            render: (img) => <img src={img} alt="" className='w-full h-20 object-cover' />
         },
         {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
+            title: 'Product Name',
+            dataIndex: 'title',
+            key: 'title',
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            title: 'Category',
+            dataIndex: 'category',
+            key: 'category',
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
+            render: (price) => <span>{price.toFixed(2)}$</span>
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            render: (quantity, record) => (
+                <div className='flex items-center'>
+                    <Button
+                        type='primary'
+                        size='small'
+                        className='w-full flex items-center justify-center !rounded-full'
+                        icon={<PlusCircleOutlined />}
+                        onClick={() => dispatch(increaseQuantity(record))}
+                    />
+                    <span className='font-bold w-6 inline-block text-center'>{quantity}</span>
+                    <Button
+                        type='primary'
+                        size='small'
+                        className='w-full flex items-center justify-center !rounded-full'
+                        icon={<MinusCircleOutlined />}
+                        onClick={() => {
+                            if (quantity === 1) {
+                                if (window.confirm('Are you sure you want to remove this item from cart?')) {
+                                    dispatch(removeFromCart(record))
+                                    message.success('Item removed from cart')
+                                }
+                            } else {
+                                dispatch(decreaseQuantity(record))
+                            }
+                        }}
+                    />
+                </div>
+            )
+        },
+        {
+            title: 'Total',
+            dataIndex: 'total',
+            key: 'total',
+            render: (_, record) => <span>{(record.quantity * record.price).toFixed(2)}$</span>
+        },
+        {
+            title: 'Actions',
+            dataIndex: 'actions',
+            key: 'actions',
+            render: (_, record) => <Popconfirm
+                title='Are you sure you want to remove this item from cart?'
+                onConfirm={() => {
+                    dispatch(removeFromCart(record))
+                    message.success('Item removed from cart')
+                }}
+                okText='Yes'
+                cancelText='No'
+            >
+                <Button
+                    type='link'
+                    danger
+                >
+                    Remove
+                </Button>
+            </Popconfirm>
         },
     ];
 
@@ -44,7 +104,7 @@ const CartPage = () => {
             <Header />
             <div className='px-6'>
                 <Table
-                    dataSource={dataSource}
+                    dataSource={cartItems}
                     columns={columns}
                     bordered
                     pagination={false}
@@ -53,15 +113,28 @@ const CartPage = () => {
                     <Card className='w-72'>
                         <div className='flex justify-between'>
                             <span>Sub Total</span>
-                            <span>549.5$</span>
+                            <span>
+                                {total > 0 ? total.toFixed(2) : 0}$
+                            </span>
                         </div>
                         <div className='flex justify-between my-2'>
-                            <span>Tax Total 8%</span>
-                            <span className='text-red-600'>+43.5$</span>
+                            <span>Tax Total {tax}%</span>
+                            <span className='text-red-600'>
+                                {
+                                    (total * tax) > 0
+                                        ?
+                                        `+${(total * tax).toFixed(2)}`
+                                        :
+                                        0
+                                }
+                                $
+                            </span>
                         </div>
                         <div className='flex justify-between'>
                             <b>Total</b>
-                            <b>549.5$</b>
+                            <b>
+                                {total > 0 ? (total + (total * tax)).toFixed(2) : 0}$
+                            </b>
                         </div>
                         <Button
                             className='mt-4 w-full'

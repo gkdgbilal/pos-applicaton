@@ -26,3 +26,8 @@ body {
   }
 
 }
+
+.menu-links .anticon {
+  display: flex;
+  justify-content: center;
+}
