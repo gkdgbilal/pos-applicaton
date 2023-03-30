@@ -1,9 +1,39 @@
-import { Button, Card, Form, Input, Modal, Select } from 'antd'
+import { Button, Card, Form, Input, message, Modal, Select } from 'antd'
 import React from 'react'
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { clearCart } from '../../redux/cartSlice';
 
 const CreateBill = ({ isModalOpen, setIsModalOpen }) => {
-    const onFinish = (values) => {
-        console.log('Success:', values);
+    const { cartItems, total, tax } = useSelector(state => state.cart)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const onFinish = async (values) => {
+        try {
+            const res = await fetch('http://localhost:5000/api/bills/add-bill', {
+                method: 'POST',
+                body: JSON.stringify({
+                    ...values,
+                    subTotal: total,
+                    tax: tax,
+                    totalAmount: (total + (total * tax)).toFixed(2),
+                    cartItems: cartItems
+                }),
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            })
+            if (res.status === 201) {
+                setIsModalOpen(false)
+                message.success('Bill created successfully')
+                dispatch(clearCart())
+                navigate('/bills')
+            }
+
+        } catch (error) {
+            message.error('Something went wrong')
+        }
     }
 
     return (
@@ -33,7 +63,7 @@ const CreateBill = ({ isModalOpen, setIsModalOpen }) => {
                 </Form.Item>
                 <Form.Item
                     label='Phone Number'
-                    name={'phoneNumber'}
+                    name={'customerPhoneNumber'}
                     rules={[
                         {
                             required: true,
@@ -64,22 +94,35 @@ const CreateBill = ({ isModalOpen, setIsModalOpen }) => {
                 <Card className='w-full'>
                     <div className='flex justify-between'>
                         <span>Sub Total</span>
-                        <span>549.5$</span>
+                        <span>
+                            {total > 0 ? total.toFixed(2) : 0}$
+                        </span>
                     </div>
                     <div className='flex justify-between my-2'>
-                        <span>Tax Total 8%</span>
-                        <span className='text-red-600'>+43.5$</span>
+                        <span>Tax {tax}%</span>
+                        <span className='text-red-600'>
+                            {
+                                (total * tax) > 0
+                                    ?
+                                    `+${(total * tax).toFixed(2)}`
+                                    :
+                                    0
+                            }
+                            $
+                        </span>
                     </div>
                     <div className='flex justify-between'>
                         <b>Total</b>
-                        <b>549.5$</b>
+                        <b>
+                            {total > 0 ? (total + (total * tax)).toFixed(2) : 0}$
+                        </b>
                     </div>
                     <div className='flex justify-end'>
                         <Button
                             className='mt-4'
                             type='primary'
-                            // onClick={() => setIsModalOpen(false)}
                             htmlType='submit'
+                            disabled={cartItems.length === 0}
                         >
                             Checkout
                         </Button>

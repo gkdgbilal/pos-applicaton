@@ -3,10 +3,12 @@ import React from 'react'
 import { ClearOutlined, PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { removeFromCart, increaseQuantity, decreaseQuantity, clearCart } from '../../redux/cartSlice'
+import { useNavigate } from 'react-router-dom'
 
 const CartTotals = () => {
     const cart = useSelector(state => state.cart)
     const { cartItems, total, tax } = cart
+    const navigate = useNavigate()
 
     const dispatch = useDispatch()
 
@@ -62,7 +64,7 @@ const CartTotals = () => {
                                 />
                             </div>
                         </li>
-                    ))
+                    )).reverse()
                         :
                         <p className='text-center'>
                             No items in cart
@@ -100,6 +102,7 @@ const CartTotals = () => {
                         type='primary'
                         size='large'
                         className='w-full'
+                        onClick={() => navigate('/cart')}
                     >
                         Create Order
                     </Button>

@@ -5,9 +5,11 @@ import { Area, Pie } from '@ant-design/plots';
 
 const StatisticPage = () => {
     const [data, setData] = useState([]);
+    const [products, setProducts] = useState([])
+    const [search, setSearch] = useState('')
 
     const asyncFetch = () => {
-        fetch('https://gw.alipayobjects.com/os/bmw-prod/360c3eae-0c73-46f0-a982-4746a6095010.json')
+        fetch('http://localhost:5000/api/bills/get-all')
             .then((response) => response.json())
             .then((json) => setData(json))
             .catch((error) => {
@@ -15,46 +17,38 @@ const StatisticPage = () => {
             });
     };
 
+    useEffect(() => {
+        asyncFetch();
+    }, []);
+
+    const getProducts = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/products/get-all')
+            const data = await response.json()
+            setProducts(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        getProducts()
+    }, [])
+
     const config = {
         data,
-        xField: 'timePeriod',
-        yField: 'value',
+        xField: 'customerName',
+        yField: 'subTotal',
         xAxis: {
             range: [0, 1],
         },
     };
 
-    const data2 = [
-        {
-            type: '分类一',
-            value: 27,
-        },
-        {
-            type: '分类二',
-            value: 25,
-        },
-        {
-            type: '分类三',
-            value: 18,
-        },
-        {
-            type: '分类四',
-            value: 15,
-        },
-        {
-            type: '分类五',
-            value: 10,
-        },
-        {
-            type: '其他',
-            value: 5,
-        },
-    ];
     const config2 = {
         appendPadding: 10,
-        data: data2,
-        angleField: 'value',
-        colorField: 'type',
+        data: data,
+        angleField: 'subTotal',
+        colorField: 'customerName',
         radius: 1,
         innerRadius: 0.6,
         label: {
@@ -82,20 +76,20 @@ const StatisticPage = () => {
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                 },
-                content: 'AntV\nG2Plot',
+                content: 'Total\nValue',
             },
         },
     };
 
-
-
-    useEffect(() => {
-        asyncFetch();
-    }, []);
+    const totalAmount = data.reduce((acc, item) => {
+        return acc + item.totalAmount;
+    }, 0);
 
     return (
         <>
-            <Header />
+            <Header 
+                setSearch={setSearch}
+            />
             <div className='px-6 md:pb-0 pb-20'>
                 <h1 className='text-4xl text-center font-bold mb-4'>Statistics</h1>
                 <div className='statistic-section'>
@@ -105,22 +99,22 @@ const StatisticPage = () => {
                     <div className='statistic-cards grid xl:grid-cols-4 md:grid-cols-2 my-10 md:gap-10 gap-4 overflow-auto'>
                         <StatisticCard
                             title='Total Customer'
-                            amount='55'
+                            amount={data?.length}
                             img='images/user.png'
                         />
                         <StatisticCard
                             title='Total Earnings'
-                            amount='555$'
+                            amount={`${totalAmount.toFixed(2)}$`}
                             img='images/money.png'
                         />
                         <StatisticCard
                             title='Total Sales'
-                            amount='5'
+                            amount={data?.length}
                             img='images/sale.png'
                         />
                         <StatisticCard
                             title='Total Products'
-                            amount='55'
+                            amount={products?.length}
                             img='images/product.png'
                         />
                     </div>

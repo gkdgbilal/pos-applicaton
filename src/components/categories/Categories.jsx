@@ -1,28 +1,37 @@
 import { PlusOutlined, EditOutlined } from '@ant-design/icons'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './style.css'
 import AddCategory from './AddCategory';
 import EditCategory from './EditCategory';
 
 
-const Categories = ({ categories, setCategories }) => {
+const Categories = ({ categories, setCategories, setFilteredProducts, products }) => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [categoryTitle, setCategoryTitle] = useState('All')
+
+    useEffect(() => {
+        if (categoryTitle === 'All') {
+            setFilteredProducts(products)
+        } else {
+            setFilteredProducts(products.filter(product => product.category === categoryTitle))
+        }
+    }, [categoryTitle, products, setFilteredProducts,])
 
     return (
         <ul className='flex md:flex-col gap-4 text-center text-lg'>
-            <li className='category-item'>
-                <span>All</span>
-            </li>
             {
-                categories.map(category => (
-                    <li
-                        className='category-item'
-                        key={category._id}
-                    >
-                        <span>{category.title}</span>
-                    </li>
-                ))
+                categories
+                    .sort((a, b) => a.title.localeCompare(b.title))
+                    .map(category => (
+                        <li
+                            className={`category-item ${category.title === categoryTitle && '!bg-pink-700'}`}
+                            key={category._id}
+                            onClick={() => setCategoryTitle(category.title)}
+                        >
+                            <span>{category.title}</span>
+                        </li>
+                    ))
             }
             <li
                 className='category-item !bg-purple-800 hover:opacity-90'

@@ -8,10 +8,9 @@ import { decreaseQuantity, increaseQuantity, removeFromCart } from '../redux/car
 
 const CartPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [search, setSearch] = useState('')
     const { cartItems, total, tax } = useSelector(state => state.cart)
     const dispatch = useDispatch()
-
-    console.log(cartItems)
 
     const columns = [
         {
@@ -101,13 +100,20 @@ const CartPage = () => {
 
     return (
         <>
-            <Header />
+            <Header
+                setSearch={setSearch}
+            />
             <div className='px-6'>
                 <Table
                     dataSource={cartItems}
                     columns={columns}
                     bordered
                     pagination={false}
+                    rowKey={record => record._id}
+                    scroll={{
+                        x: 1200,
+                        y: 300
+                    }}
                 />
                 <div className="cart-total flex justify-end mt-4">
                     <Card className='w-72'>
@@ -118,7 +124,7 @@ const CartPage = () => {
                             </span>
                         </div>
                         <div className='flex justify-between my-2'>
-                            <span>Tax Total {tax}%</span>
+                            <span>Tax {tax}%</span>
                             <span className='text-red-600'>
                                 {
                                     (total * tax) > 0
@@ -141,6 +147,7 @@ const CartPage = () => {
                             size="large"
                             type='primary'
                             onClick={() => setIsModalOpen(true)}
+                            disabled={cartItems.length === 0}
                         >
                             Checkout
                         </Button>

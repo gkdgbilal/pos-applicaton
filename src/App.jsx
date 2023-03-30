@@ -1,5 +1,5 @@
 import HomePage from "./pages/HomePage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CartPage from "./pages/CartPage";
 import BillPage from "./pages/BillPage";
 import CustomerPage from "./pages/CustomerPage";
@@ -12,17 +12,48 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/cart' element={<CartPage />} />
-        <Route path='/bills' element={<BillPage />} />
-        <Route path='/customers' element={<CustomerPage />} />
-        <Route path='/statistic' element={<StatisticPage />} />
-        <Route path='/products' element={<ProductPage />} />
+        <Route
+          path='/'
+          element={
+            <RouterControl>
+              <HomePage />
+            </RouterControl>
+          }
+        />
+        <Route path='/cart' element={<RouterControl>
+          <CartPage />
+        </RouterControl>} />
+        <Route path='/bills' element={<RouterControl>
+          <BillPage />
+        </RouterControl>} />
+        <Route path='/customers' element={
+          <RouterControl>
+            <CustomerPage />
+          </RouterControl>
+        } />
+        <Route path='/statistic' element={
+          <RouterControl>
+            <StatisticPage />
+          </RouterControl>
+        } />
+        <Route path='/products' element={
+          <RouterControl>
+            <ProductPage />
+          </RouterControl>
+        } />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/login' element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );
+}
+
+export const RouterControl = ({ children }) => {
+  if (localStorage.getItem("currentUser")) {
+    return children;
+  } else {
+    return <Navigate to='/login' />;
+  }
 }
 
 export default App;
